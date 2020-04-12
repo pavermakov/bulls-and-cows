@@ -4,13 +4,15 @@ import Screen from '~/components/Screen';
 import Keypad from '~/components/Keypad';
 import AnimatedKey from '~/components/AnimatedKey';
 import { Input, InputCell } from '~/components/Input';
-import { measure, delay } from '~/utilities';
+import { measure, getRandomInput, compareResults } from '~/utilities';
+import { KEY_MARGIN } from '~/constants/config';
 
-const MAX_NUM = 4;
+const isInputFull = (values) => values.every((item) => item !== '');
 
 const App = () => {
   const [input, setInput] = useState(['', '', '', '']);
   const [dummyKeys, setDummyKeys] = useState([]);
+  const guessedValues = useRef(getRandomInput());
 
   const $cell1 = useRef();
   const $cell2 = useRef();
@@ -18,10 +20,9 @@ const App = () => {
   const $cell4 = useRef();
 
   const cells = { $cell1, $cell2, $cell3, $cell4 };
-  const isMax = input.every((item) => item !== '');
 
   const updateInput = async (key) => {
-    if (isMax) {
+    if (isInputFull(input)) {
       return;
     }
 
@@ -43,8 +44,16 @@ const App = () => {
       },
       style: {
         position: 'absolute',
-        top: key.y - 5,
-        left: key.x - 5,
+        top: key.y - KEY_MARGIN,
+        left: key.x - KEY_MARGIN,
+      },
+      onAnimationComplete() {
+        if (isInputFull(nextInput)) {
+          // compare user input with guessed values
+          const { bulls, cows } = compareResults(input, guessedValues.current);
+
+          console.log({ bulls, cows });
+        }
       },
     };
 
@@ -77,6 +86,33 @@ const App = () => {
     setDummyKeys(nextDummyKeys);
   };
 
+  const clearInput = () => {
+    let dummiesLeft = dummyKeys.length;
+
+    if (!dummiesLeft) {
+      return;
+    }
+
+    const nextDummyKeys = dummyKeys.slice().map((item) => ({
+      ...item,
+      shiftBy: { x: 0, y: 0 },
+      onAnimationComplete() {
+        dummiesLeft -= 1;
+
+        if (dummiesLeft > 0) {
+          return;
+        }
+
+        // change this
+        setInput(['', '', '', '']);
+        setDummyKeys([]);
+      },
+    }));
+
+
+    setDummyKeys(nextDummyKeys);
+  };
+
   useEffect(() => {
     console.log(input);
   }, [input]);
@@ -96,7 +132,9 @@ const App = () => {
         disabledKeys={input}
         onPress={updateInput}
         onDelete={deleteLastNumber}
+        onClear={clearInput}
       />
+
 
       {dummyKeys.map((item, index) => (
         <AnimatedKey
