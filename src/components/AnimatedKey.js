@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { Animated, Easing } from 'react-native';
+import PropTypes from 'prop-types';
 import Key from '~/components/Key';
 
 const getElasticDirection = (value) => {
@@ -11,7 +12,7 @@ const getElasticDirection = (value) => {
 const AnimatedKey = (props) => {
   const {
     style,
-    shiftBy = { x: 0, y: 0 },
+    shiftBy,
     onAnimationComplete,
     ...rest
   } = props;
@@ -51,6 +52,27 @@ const AnimatedKey = (props) => {
       />
     </Animated.View>
   );
+};
+
+AnimatedKey.propTypes = {
+  style: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.number,
+  ]),
+
+  shiftBy: PropTypes.exact({
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+  }),
+
+  onAnimationComplete: PropTypes.func,
+};
+
+AnimatedKey.defaultProps = {
+  style: null,
+  shiftBy: { x: 0, y: 0 },
+  onAnimationComplete: Function.prototype,
 };
 
 export default AnimatedKey;

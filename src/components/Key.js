@@ -1,28 +1,67 @@
 import React, { useRef } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import PropTypes from 'prop-types';
 import colors from '~/constants/colors';
 import { measure } from '~/utilities';
+import { KEY_MARGIN } from '~/constants/config';
+
+const getPosition = async (el, cache) => {
+  let position = cache;
+
+  if (!position) {
+    const { x, y } = await measure(el);
+    position = { x, y };
+  }
+
+  return position;
+};
 
 const Key = ({ style, value, isDisabled, isHidden, onPress }) => {
-  const ref = useRef();
+  const $el = useRef();
+  const cachedPosition = useRef(null);
 
-  const handler = async () => {
-    const { x, y } = await measure(ref.current);
-    onPress({ value, x, y });
+  const onPressHandler = async () => {
+    const position = await getPosition($el.current, cachedPosition.current);
+    onPress({ value, ...position });
+
+    if (!cachedPosition.current) {
+      cachedPosition.current = position;
+    }
   };
 
   return (
     <TouchableOpacity
-      ref={ref}
+      ref={$el}
       style={[s.root, isHidden && s.hidden, style]}
       disabled={isDisabled || isHidden}
-      onPress={handler}
+      onPress={onPressHandler}
     >
       <Text style={s.text}>
         {value}
       </Text>
     </TouchableOpacity>
   );
+};
+
+Key.propTypes = {
+  value: PropTypes.string.isRequired,
+
+  style: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+    PropTypes.number,
+  ]),
+
+  isDisabled: PropTypes.bool,
+  isHidden: PropTypes.bool,
+  onPress: PropTypes.func,
+};
+
+Key.defaultProps = {
+  style: null,
+  isDisabled: false,
+  isHidden: false,
+  onPress: Function.prototype,
 };
 
 const s = StyleSheet.create({
@@ -33,7 +72,7 @@ const s = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 5,
-    margin: 5,
+    margin: KEY_MARGIN,
   },
   hidden: {
     transform: [{ scale: 0 }],
