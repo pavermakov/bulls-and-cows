@@ -4,15 +4,17 @@ import Screen from '~/components/Screen';
 import Keypad from '~/components/Keypad';
 import AnimatedKey from '~/components/AnimatedKey';
 import { Input, InputCell } from '~/components/Input';
+import History from '~/components/History';
 import { measure, getRandomInput, compareResults } from '~/utilities';
 import { KEY_MARGIN } from '~/constants/config';
 
 const isInputFull = (values) => values.every((item) => item !== '');
 
 const App = () => {
+  const guessedValues = useRef(getRandomInput());
   const [input, setInput] = useState(['', '', '', '']);
   const [dummyKeys, setDummyKeys] = useState([]);
-  const guessedValues = useRef(getRandomInput());
+  const [history, setHistory] = useState([]);
 
   const $cell1 = useRef();
   const $cell2 = useRef();
@@ -50,14 +52,24 @@ const App = () => {
       onAnimationComplete() {
         if (isInputFull(nextInput)) {
           // compare user input with guessed values
-          const { bulls, cows } = compareResults(input, guessedValues.current);
+          const results = compareResults(nextInput, guessedValues.current);
+          const newHistoryItem = {
+            bulls: results.bulls,
+            cows: results.cows,
+            value: nextInput.join(''),
+          };
 
-          console.log({ bulls, cows });
+          if (!results.isMatched) {
+            setHistory((prevHistory) => [...prevHistory, newHistoryItem]);
+            return;
+          }
+
+          alert('You won!');
         }
       },
     };
 
-    setDummyKeys([...dummyKeys, newDummmyKey]);
+    setDummyKeys((prevDummyKeys) => [...prevDummyKeys, newDummmyKey]);
   };
 
   const deleteLastNumber = () => {
@@ -119,7 +131,9 @@ const App = () => {
 
   return (
     <Screen>
-      <View style={s.zone} />
+      <View style={s.zone}>
+        <History items={history} />
+      </View>
 
       <Input>
         <InputCell ref={$cell1} />
@@ -149,6 +163,8 @@ const App = () => {
 const s = StyleSheet.create({
   zone: {
     flex: 1,
+    backgroundColor: 'orange',
+    padding: 5,
   },
 
 });
