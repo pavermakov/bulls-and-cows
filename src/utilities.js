@@ -37,6 +37,10 @@ export const getRandomInput = (max = 4) => {
 };
 
 export const compareResults = (user = [], ai = []) => {
+  if (user.join('') === ai.join('')) {
+    return { isMatched: true };
+  }
+
   let bulls = 0;
   let cows = 0;
 
@@ -54,5 +58,5 @@ export const compareResults = (user = [], ai = []) => {
     }
   });
 
-  return { bulls, cows };
+  return { bulls, cows, isMatched: false };
 };

@@ -42,6 +42,8 @@ module.exports = {
     "import/prefer-default-export": ["off"],
     "operator-linebreak": ["off"],
     "react/jsx-curly-newline": ["off"],
-    "react/jsx-props-no-spreading": ["off"]
+    "react/jsx-props-no-spreading": ["off"],
+    "global-require": ["off"],
+    "no-unused-expressions": ["off"]
   }
 };
