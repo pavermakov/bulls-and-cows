@@ -1,20 +1,22 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import colors from '~/constants/colors';
+import Decorations from '~/components/Decorations';
 
 const Screen = ({ children }) => {
   return (
-    <SafeAreaView style={s.root}>
-      {children}
-    </SafeAreaView>
+    <>
+      <Decorations />
+
+      <SafeAreaView style={s.wrapper}>
+          {children}
+      </SafeAreaView>
+    </>
   );
 };
 
 const s = StyleSheet.create({
-  root: {
-    flex: 1,
-    position: 'relative',
-    backgroundColor: colors.green,
+  wrapper: {
+    ...StyleSheet.absoluteFill,
   },
 });
 

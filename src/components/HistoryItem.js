@@ -64,7 +64,7 @@ const s = StyleSheet.create({
   root: {
     paddingVertical: 5,
     flexDirection: 'row',
-    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.7)',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   text: {
