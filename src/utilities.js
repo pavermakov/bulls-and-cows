@@ -1,3 +1,5 @@
+import { MAX_INPUT_VALUE } from '~/constants/config';
+
 export const measure = (el) => {
   return new Promise((resolve) => {
     el.measureInWindow((x, y, width, height) => {
@@ -22,7 +24,11 @@ export const times = (n, iterator) => {
   return accum;
 };
 
-export const getRandomInput = (max = 4) => {
+export const getGefaultUserInput = () => {
+  return [...Array(MAX_INPUT_VALUE)].map(() => '');
+};
+
+export const getSecretValue = (max = 4) => {
   let nums = [...Array(10).keys()];
   const result = [];
 
@@ -59,4 +65,16 @@ export const compareResults = (user = [], ai = []) => {
   });
 
   return { bulls, cows, isMatched: false };
+};
+
+export const getRandomItemFromList = (list = []) => {
+  return list[Math.floor(Math.random() * list.length)];
+};
+
+export const getRandomNumberFromRange = ({ min = 1, max = 10, isInt = false }) => {
+  return Number((Math.random() * (min - max) + max).toFixed(isInt ? 0 : 1));
+};
+
+export const renderTimes = (n, render) => {
+  return [...Array(n)].map(render);
 };

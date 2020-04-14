@@ -22,7 +22,7 @@ const s = StyleSheet.create({
   root: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingBottom: 40,
+    paddingBottom: 20,
   },
 
   cell: {

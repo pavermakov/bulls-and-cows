@@ -15,7 +15,7 @@ const History = ({ items }) => {
 
   return (
     <View style={s.root}>
-      <View style={{ flex: 1 }} />
+      <View style={s.spacer} />
 
       <View>
         <FlatList
@@ -35,6 +35,9 @@ const s = StyleSheet.create({
   root: {
     flexDirection: 'row',
     justifyContent: 'center',
+  },
+  spacer: {
+    flex: 1,
   },
   list: {
     backgroundColor: 'rgba(0, 0, 0, 0.3)',

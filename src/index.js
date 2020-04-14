@@ -5,14 +5,14 @@ import Keypad from '~/components/Keypad';
 import AnimatedKey from '~/components/AnimatedKey';
 import { Input, InputCell } from '~/components/Input';
 import History from '~/components/History';
-import { measure, getRandomInput, compareResults } from '~/utilities';
+import { measure, getSecretValue, compareResults, getGefaultUserInput } from '~/utilities';
 import { KEY_MARGIN } from '~/constants/config';
 
 const isInputFull = (values) => values.every((item) => item !== '');
 
 const App = () => {
-  const guessedValues = useRef(getRandomInput());
-  const [input, setInput] = useState(['', '', '', '']);
+  const guessedValues = useRef(getSecretValue());
+  const [input, setInput] = useState(getGefaultUserInput());
   const [dummyKeys, setDummyKeys] = useState([]);
   const [history, setHistory] = useState([]);
 
@@ -115,14 +115,20 @@ const App = () => {
           return;
         }
 
-        // change this
-        setInput(['', '', '', '']);
+        setInput(getGefaultUserInput());
         setDummyKeys([]);
       },
     }));
 
 
     setDummyKeys(nextDummyKeys);
+  };
+
+  const resetGame = () => {
+    guessedValues.current = getSecretValue();
+    setInput(getGefaultUserInput());
+    setDummyKeys([]);
+    setHistory([]);
   };
 
   useEffect(() => {
@@ -163,8 +169,8 @@ const App = () => {
 const s = StyleSheet.create({
   zone: {
     flex: 1,
-    backgroundColor: 'orange',
     padding: 5,
+    paddingBottom: 70,
   },
 
 });
