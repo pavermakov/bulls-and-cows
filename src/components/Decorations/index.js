@@ -6,7 +6,7 @@ import Sun from '~/components/Decorations/Sun';
 import Clouds from '~/components/Decorations/Clouds';
 import colors from '~/constants/colors';
 
-const Decorations = ({  }) => {
+const Decorations = () => {
   return (
     <View style={s.root}>
       <Sun style={s.sun} />

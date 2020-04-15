@@ -44,6 +44,7 @@ module.exports = {
     "react/jsx-curly-newline": ["off"],
     "react/jsx-props-no-spreading": ["off"],
     "global-require": ["off"],
-    "no-unused-expressions": ["off"]
+    "no-unused-expressions": ["off"],
+    "react/prop-types": 1
   }
 };
