@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import useAnimationSettings from '~/hooks/useAnimationSettings';
 
 const Cloud = (props) => {
   const {
@@ -11,20 +12,43 @@ const Cloud = (props) => {
     width,
     duration,
     shiftBy,
-    onAnimationComplete
+    onAnimationComplete,
   } = props;
 
   const translateX = useRef(new Animated.Value(0)).current;
+  const { isAnimationOn } = useAnimationSettings();
 
-  useEffect(() => {
+  const startAnimation = (delayOverride) => {
     Animated.timing(translateX, {
       toValue: shiftBy,
       easing: Easing.linear,
       duration,
-      delay,
+      delay: delayOverride || delay,
       useNativeDriver: true,
-    }).start(onAnimationComplete);
+    }).start(({ finished }) => {
+      if (finished) {
+        onAnimationComplete();
+      }
+    });
+  };
+
+  const toggleAnimation = () => {
+    if (!isAnimationOn) {
+      return void translateX.stopAnimation();
+    }
+
+    startAnimation(1);
+  };
+
+  useEffect(() => {
+    if (isAnimationOn) {
+      startAnimation();
+    }
   }, []);
+
+  useEffect(() => {
+    toggleAnimation();
+  }, [isAnimationOn]);
 
   const rootStyles = [
     s.root,
