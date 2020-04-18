@@ -16,7 +16,8 @@ const getPosition = async (el, cache) => {
   return position;
 };
 
-const Key = ({ style, value, isDisabled, isHidden, onPress }) => {
+const Key = (props) => {
+  const { style, value, isDisabled, isHidden, onPress, onLongPress } = props;
   const $el = useRef();
   const cachedPosition = useRef(null);
 
@@ -35,6 +36,7 @@ const Key = ({ style, value, isDisabled, isHidden, onPress }) => {
       style={[s.root, isHidden && s.hidden, style]}
       disabled={isDisabled || isHidden}
       onPress={onPressHandler}
+      onLongPress={onLongPress}
     >
       <Text style={s.text}>
         {value}
@@ -55,6 +57,7 @@ Key.propTypes = {
   isDisabled: PropTypes.bool,
   isHidden: PropTypes.bool,
   onPress: PropTypes.func,
+  onLongPress: PropTypes.func,
 };
 
 Key.defaultProps = {
@@ -62,6 +65,7 @@ Key.defaultProps = {
   isDisabled: false,
   isHidden: false,
   onPress: Function.prototype,
+  onLongPress: Function.prototype,
 };
 
 const s = StyleSheet.create({

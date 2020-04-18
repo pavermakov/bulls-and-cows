@@ -1,7 +1,9 @@
 import React, { useRef, useEffect } from 'react';
-import { Animated, Easing } from 'react-native';
+import { Animated, Easing, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import Key from '~/components/Key';
+import Lock from './Lock';
+import colors from '~/constants/colors';
 
 const getElasticDirection = (value) => {
   const direction = Math.random() > 0.5 ? -1 : 1;
@@ -9,11 +11,14 @@ const getElasticDirection = (value) => {
   return value * direction;
 };
 
-const AnimatedKey = (props) => {
+const DummyKey = (props) => {
   const {
     style,
     shiftBy,
+    isLocked,
+    onToggleLock,
     onAnimationComplete,
+    onLock,
     ...rest
   } = props;
 
@@ -21,10 +26,9 @@ const AnimatedKey = (props) => {
   const translateY = useRef(new Animated.Value(0)).current;
 
   const rootStyles = [
+    s.root,
     style,
-    {
-      transform: [{ translateX }, { translateY }],
-    },
+    { transform: [{ translateX }, { translateY }] },
   ];
 
   useEffect(() => {
@@ -46,15 +50,18 @@ const AnimatedKey = (props) => {
 
   return (
     <Animated.View style={rootStyles}>
+      <Lock isHandleVisible={isLocked} />
+
       <Key
         {...rest}
-        isDisabled
+        // isDisabled
+        onLongPress={onToggleLock}
       />
     </Animated.View>
   );
 };
 
-AnimatedKey.propTypes = {
+DummyKey.propTypes = {
   style: PropTypes.oneOfType([
     PropTypes.object,
     PropTypes.array,
@@ -67,12 +74,22 @@ AnimatedKey.propTypes = {
   }),
 
   onAnimationComplete: PropTypes.func,
+  onLock: PropTypes.func,
 };
 
-AnimatedKey.defaultProps = {
+DummyKey.defaultProps = {
   style: null,
   shiftBy: { x: 0, y: 0 },
   onAnimationComplete: Function.prototype,
+  onLock: Function.prototype,
 };
 
-export default AnimatedKey;
+const s = StyleSheet.create({
+  root: {
+    // just for extra safety
+    position: 'absolute',
+    left: -500,
+  },
+});
+
+export default DummyKey;
