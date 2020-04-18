@@ -1,14 +1,16 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Animated, Easing, StyleSheet } from 'react-native';
 import colors from '~/constants/colors';
+import useAnimationSettings from '~/hooks/useAnimationSettings';
 
 const MAX_SCALE = 1.7;
 const MIN_SCALE = 0.9;
 
 const Ray = ({ rotate, isOdd }) => {
   const scaleX = useRef(new Animated.Value(isOdd ? MIN_SCALE : MAX_SCALE)).current;
+  const { isAnimationOn } = useAnimationSettings();
 
-  useEffect(() => {
+  const startAnimation = () => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(scaleX, {
@@ -24,8 +26,26 @@ const Ray = ({ rotate, isOdd }) => {
           useNativeDriver: true,
         }),
       ]),
-    );
+    ).start();
+  };
+
+  const toggleAnimation = () => {
+    if (!isAnimationOn) {
+      return void scaleX.stopAnimation();
+    }
+
+    startAnimation();
+  };
+
+  useEffect(() => {
+    if (isAnimationOn) {
+      startAnimation();
+    }
   }, []);
+
+  useEffect(() => {
+    toggleAnimation();
+  }, [isAnimationOn]);
 
   return (
     <View style={[s.root, { transform: [{ rotate }] }]}>

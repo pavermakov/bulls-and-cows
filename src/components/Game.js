@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet, Vibration } from 'react-native';
 import Screen from '~/components/Screen';
 import Keypad from '~/components/Keypad';
 import DummyKey from '~/components/DummyKey';
 import { Input, InputCell } from '~/components/Input';
 import History from '~/components/History';
+import SupportButton from '~/components/SupportButton';
 import useSetState from '~/hooks/useSetState';
 import useAnimationSettings from '~/hooks/useAnimationSettings';
 import { measure, getSecretValue, compareResults, getEmptyUserInput } from '~/utilities';
@@ -59,11 +60,8 @@ const App = () => {
 
     // get available cell
     const index = input.findIndex((item) => !item);
-
-    // update input
     const nextInput = input.slice();
     nextInput[index] = key.value;
-    setState({ input: nextInput });
 
     const destination = await measure(cells[`$cell${index + 1}`].current);
 
@@ -98,7 +96,13 @@ const App = () => {
       },
     };
 
+    // this should go first
     setState({ dummyKeys: updateDummyKeys(dummyKeys, newDummyKey, index) });
+
+    // update input
+    // const nextInput = input.slice();
+    // nextInput[index] = key.value;
+    setState({ input: nextInput });
   };
 
   const deleteInput = () => {
@@ -176,6 +180,7 @@ const App = () => {
     nextLockedInputs[index] = !nextLockedInputs[index];
 
     setState({ lockedInputs: nextLockedInputs });
+    Vibration.vibrate(100);
   };
 
   const resetGame = () => {
@@ -207,10 +212,17 @@ const App = () => {
         onClear={clearInput}
       />
 
-      <Button
-        title="toggle animations"
-        onPress={toggleAnimation}
-      />
+      <View style={s.controls}>
+        <SupportButton
+          title="A"
+          onPress={toggleAnimation}
+        />
+
+        <SupportButton
+          title="?"
+          onPress={() => {}}
+        />
+      </View>
 
       {dummyKeys.map((item, index) => item && (
         <DummyKey
@@ -230,7 +242,10 @@ const s = StyleSheet.create({
     padding: 5,
     paddingBottom: 70,
   },
-
+  controls: {
+    position: 'absolute',
+    bottom: 0,
+  },
 });
 
 export default App;
