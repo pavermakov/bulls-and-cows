@@ -12,18 +12,18 @@ const DIRECTIONS = {
 };
 
 const DURATION = {
-  MIN: 50000,
+  MIN: 40000,
   MAX: 90000,
 };
 
 const DELAY = {
   MIN: 2000,
-  MAX: 10000,
+  MAX: 4000,
 };
 
 const WIDTH = {
-  MIN: 40,
-  MAX: 100,
+  MIN: 90,
+  MAX: 140,
 };
 
 const TOP = {

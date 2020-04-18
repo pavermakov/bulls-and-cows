@@ -54,7 +54,7 @@ const DummyKey = (props) => {
 
       <Key
         {...rest}
-        // isDisabled
+        activeOpacity={1}
         onLongPress={onToggleLock}
       />
     </Animated.View>

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import colors from '~/constants/colors';
 import { measure } from '~/utilities';
@@ -17,7 +17,7 @@ const getPosition = async (el, cache) => {
 };
 
 const Key = (props) => {
-  const { style, value, isDisabled, isHidden, onPress, onLongPress } = props;
+  const { style, value, isDisabled, isHidden, activeOpacity, onPress, onLongPress } = props;
   const $el = useRef();
   const cachedPosition = useRef(null);
 
@@ -35,6 +35,8 @@ const Key = (props) => {
       ref={$el}
       style={[s.root, isHidden && s.hidden, style]}
       disabled={isDisabled || isHidden}
+      delayLongPress={300}
+      activeOpacity={activeOpacity}
       onPress={onPressHandler}
       onLongPress={onLongPress}
     >
