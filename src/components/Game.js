@@ -1,22 +1,49 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Button, StyleSheet } from 'react-native';
 import Screen from '~/components/Screen';
 import Keypad from '~/components/Keypad';
-import AnimatedKey from '~/components/AnimatedKey';
+import DummyKey from '~/components/DummyKey';
 import { Input, InputCell } from '~/components/Input';
 import History from '~/components/History';
+import useSetState from '~/hooks/useSetState';
 import useAnimationSettings from '~/hooks/useAnimationSettings';
-import { measure, getSecretValue, compareResults, getGefaultUserInput } from '~/utilities';
+import { measure, getSecretValue, compareResults, getEmptyUserInput } from '~/utilities';
 import { KEY_MARGIN } from '~/constants/config';
 
 const isInputFull = (values) => values.every((item) => item !== '');
 
+const getInputIndexToDelete = (input, lockedInputs) => {
+  for (let i = input.length - 1; i >= 0; i -= 1) {
+    if (input[i] !== '' && !lockedInputs[i]) {
+      return i;
+    }
+  }
+};
+
+const getInitialState = () => {
+  const input = getEmptyUserInput();
+  const lockedInputs = input.map(() => false);
+  const dummyKeys = input.map(() => null);
+
+  return {
+    input,
+    lockedInputs,
+    dummyKeys,
+    history: [],
+  };
+};
+
+const updateDummyKeys = (dummyKeys, newDummyKey, index) => {
+  const nextDummyKeys = dummyKeys.slice();
+  nextDummyKeys[index] = newDummyKey;
+
+  return nextDummyKeys;
+};
+
 const App = () => {
   const guessedValues = useRef(getSecretValue());
-  const [input, setInput] = useState(getGefaultUserInput());
-  const [dummyKeys, setDummyKeys] = useState([]);
-  const [history, setHistory] = useState([]);
   const { toggleAnimation } = useAnimationSettings();
+  const [{ input, dummyKeys, history, lockedInputs }, setState] = useSetState(getInitialState());
 
   const $cell1 = useRef();
   const $cell2 = useRef();
@@ -36,11 +63,11 @@ const App = () => {
     // update input
     const nextInput = input.slice();
     nextInput[index] = key.value;
-    setInput(nextInput);
+    setState({ input: nextInput });
 
     const destination = await measure(cells[`$cell${index + 1}`].current);
 
-    const newDummmyKey = {
+    const newDummyKey = {
       value: key.value,
       shiftBy: {
         x: destination.x - key.x,
@@ -62,7 +89,7 @@ const App = () => {
           };
 
           if (!results.isMatched) {
-            setHistory((prevHistory) => [...prevHistory, newHistoryItem]);
+            setState({ history: [...history, newHistoryItem] });
             return;
           }
 
@@ -71,71 +98,94 @@ const App = () => {
       },
     };
 
-    setDummyKeys((prevDummyKeys) => [...prevDummyKeys, newDummmyKey]);
+    setState({ dummyKeys: updateDummyKeys(dummyKeys, newDummyKey, index) });
   };
 
-  const deleteLastNumber = () => {
-    let nextDummyKeys = dummyKeys.slice();
-    const dummyKeyToDelete = nextDummyKeys[nextDummyKeys.length - 1];
+  const deleteInput = () => {
+    const nextInput = input.slice();
+    const indexToDelete = getInputIndexToDelete(nextInput, lockedInputs);
 
-    if (!dummyKeyToDelete) {
+    if (indexToDelete === undefined) {
       return;
     }
+
+    const nextDummyKeys = dummyKeys.slice();
+    const dummyKeyToDelete = nextDummyKeys[indexToDelete];
 
     dummyKeyToDelete.shiftBy = { x: 0, y: 0 };
     dummyKeyToDelete.onAnimationComplete = async () => {
       // update input
-      const nextInput = input.slice();
-      let index = nextInput.indexOf('') - 1;
-      index = index >= 0 ? index : nextInput.length - 1;
-      nextInput[index] = '';
-      setInput(nextInput);
+      nextInput[indexToDelete] = '';
+      setState({ input: nextInput });
 
       // remove last dummy key
-      nextDummyKeys = dummyKeys.slice();
-      nextDummyKeys.pop();
-      setDummyKeys(nextDummyKeys);
+      nextDummyKeys[indexToDelete] = null;
+      setState({ dummyKeys: nextDummyKeys });
     };
 
-    setDummyKeys(nextDummyKeys);
+    setState({ dummyKeys: nextDummyKeys });
   };
 
   const clearInput = () => {
-    let dummiesLeft = dummyKeys.length;
+    let nextDummyKeys = dummyKeys.slice();
+    let itemsToDelete = nextDummyKeys.filter((item, index) => {
+      return item && !lockedInputs[index];
+    }).length;
 
-    if (!dummiesLeft) {
+    if (!itemsToDelete) {
       return;
     }
 
-    const nextDummyKeys = dummyKeys.slice().map((item) => ({
-      ...item,
-      shiftBy: { x: 0, y: 0 },
-      onAnimationComplete() {
-        dummiesLeft -= 1;
+    nextDummyKeys = dummyKeys.map((item, index) => {
+      if (!item || lockedInputs[index]) {
+        return item;
+      }
 
-        if (dummiesLeft > 0) {
-          return;
-        }
+      return {
+        ...item,
+        shiftBy: { x: 0, y: 0 },
+        onAnimationComplete() {
+          itemsToDelete -= 1;
 
-        setInput(getGefaultUserInput());
-        setDummyKeys([]);
-      },
-    }));
+          if (itemsToDelete > 0) {
+            return;
+          }
+
+          const nextInput = input.map((inputItem, inputIndex) => {
+            return lockedInputs[inputIndex] ? inputItem : '';
+          });
+
+          nextDummyKeys = nextDummyKeys.map((dummyKeyItem, dummyKeyIndex) => {
+            return lockedInputs[dummyKeyIndex] ? dummyKeyItem : null;
+          });
+
+          setState({
+            input: nextInput,
+            dummyKeys: nextDummyKeys,
+          });
+        },
+      };
+    });
 
 
-    setDummyKeys(nextDummyKeys);
+    setState({ dummyKeys: nextDummyKeys });
+  };
+
+  const toggleDummyKeyLock = (index) => {
+    const nextLockedInputs = lockedInputs.slice();
+    nextLockedInputs[index] = !nextLockedInputs[index];
+
+    setState({ lockedInputs: nextLockedInputs });
   };
 
   const resetGame = () => {
     guessedValues.current = getSecretValue();
-    setInput(getGefaultUserInput());
-    setDummyKeys([]);
-    setHistory([]);
+    setState(getInitialState());
   };
 
   useEffect(() => {
-    console.log(input);
-  }, [input]);
+    console.log(lockedInputs);
+  }, [lockedInputs]);
 
   return (
     <Screen>
@@ -153,7 +203,7 @@ const App = () => {
       <Keypad
         disabledKeys={input}
         onPress={updateInput}
-        onDelete={deleteLastNumber}
+        onDelete={deleteInput}
         onClear={clearInput}
       />
 
@@ -162,10 +212,11 @@ const App = () => {
         onPress={toggleAnimation}
       />
 
-
-      {dummyKeys.map((item, index) => (
-        <AnimatedKey
+      {dummyKeys.map((item, index) => item && (
+        <DummyKey
           key={index}
+          isLocked={lockedInputs[index]}
+          onToggleLock={() => toggleDummyKeyLock(index)}
           {...item}
         />
       ))}

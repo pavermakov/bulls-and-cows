@@ -24,7 +24,7 @@ export const times = (n, iterator) => {
   return accum;
 };
 
-export const getGefaultUserInput = () => {
+export const getEmptyUserInput = () => {
   return [...Array(MAX_INPUT_VALUE)].map(() => '');
 };
 
