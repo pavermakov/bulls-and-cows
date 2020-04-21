@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 import colors from '~/constants/colors';
 
 const SupportButton = ({ title, onPress }) => {
@@ -11,6 +12,11 @@ const SupportButton = ({ title, onPress }) => {
       <Text style={s.text}>{title}</Text>
     </TouchableOpacity>
   );
+};
+
+SupportButton.propTypes = {
+  title: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired,
 };
 
 const s = StyleSheet.create({

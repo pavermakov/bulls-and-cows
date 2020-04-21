@@ -56,6 +56,7 @@ Key.propTypes = {
     PropTypes.number,
   ]),
 
+  activeOpacity: PropTypes.number,
   isDisabled: PropTypes.bool,
   isHidden: PropTypes.bool,
   onPress: PropTypes.func,
@@ -66,6 +67,7 @@ Key.defaultProps = {
   style: null,
   isDisabled: false,
   isHidden: false,
+  activeOpacity: 0.1,
   onPress: Function.prototype,
   onLongPress: Function.prototype,
 };

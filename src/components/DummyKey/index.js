@@ -3,7 +3,6 @@ import { Animated, Easing, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import Key from '~/components/Key';
 import Lock from './Lock';
-import colors from '~/constants/colors';
 
 const getElasticDirection = (value) => {
   const direction = Math.random() > 0.5 ? -1 : 1;
@@ -18,7 +17,6 @@ const DummyKey = (props) => {
     isLocked,
     onToggleLock,
     onAnimationComplete,
-    onLock,
     ...rest
   } = props;
 
@@ -73,15 +71,17 @@ DummyKey.propTypes = {
     y: PropTypes.number.isRequired,
   }),
 
+  isLocked: PropTypes.bool,
   onAnimationComplete: PropTypes.func,
-  onLock: PropTypes.func,
+  onToggleLock: PropTypes.func,
 };
 
 DummyKey.defaultProps = {
   style: null,
   shiftBy: { x: 0, y: 0 },
+  isLocked: false,
   onAnimationComplete: Function.prototype,
-  onLock: Function.prototype,
+  onToggleLock: Function.prototype,
 };
 
 const s = StyleSheet.create({
