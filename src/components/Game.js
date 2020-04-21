@@ -1,11 +1,14 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Button, StyleSheet, Vibration } from 'react-native';
+import { View, StyleSheet, Vibration } from 'react-native';
+
 import Screen from '~/components/Screen';
 import Keypad from '~/components/Keypad';
 import DummyKey from '~/components/DummyKey';
 import { Input, InputCell } from '~/components/Input';
 import History from '~/components/History';
 import SupportButton from '~/components/SupportButton';
+import Info from '~/components/Info';
+
 import useSetState from '~/hooks/useSetState';
 import useAnimationSettings from '~/hooks/useAnimationSettings';
 import { measure, getSecretValue, compareResults, getEmptyUserInput } from '~/utilities';
@@ -31,6 +34,7 @@ const getInitialState = () => {
     lockedInputs,
     dummyKeys,
     history: [],
+    isInfoVisible: false,
   };
 };
 
@@ -44,7 +48,8 @@ const updateDummyKeys = (dummyKeys, newDummyKey, index) => {
 const App = () => {
   const guessedValues = useRef(getSecretValue());
   const { toggleAnimation } = useAnimationSettings();
-  const [{ input, dummyKeys, history, lockedInputs }, setState] = useSetState(getInitialState());
+  const [state, setState] = useSetState(getInitialState());
+  const { input, dummyKeys, history, lockedInputs, isInfoVisible } = state;
 
   const $cell1 = useRef();
   const $cell2 = useRef();
@@ -188,6 +193,9 @@ const App = () => {
     setState(getInitialState());
   };
 
+  const showInfo = () => setState({ isInfoVisible: true });
+  const hideInfo = () => setState({ isInfoVisible: false });
+
   useEffect(() => {
     console.log(lockedInputs);
   }, [lockedInputs]);
@@ -220,7 +228,7 @@ const App = () => {
 
         <SupportButton
           title="?"
-          onPress={() => {}}
+          onPress={showInfo}
         />
       </View>
 
@@ -232,6 +240,8 @@ const App = () => {
           {...item}
         />
       ))}
+
+      {isInfoVisible && <Info onClose={hideInfo} />}
     </Screen>
   );
 };
