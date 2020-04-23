@@ -1,19 +1,15 @@
 import React from 'react';
-import { View, Text, Image, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import Overlay from '~/components/Overlay';
 import Tooltip from '~/components/Tooltip';
+import Farmer from '~/components/Farmer';
 import CloseButton from '~/components/CloseButton';
-import files from '~/constants/files';
 
 const Info = ({ onClose }) => {
   return (
     <Overlay>
       <View style={s.wrapper}>
-        <Image
-          style={s.image}
-          resizeMode="contain"
-          source={files.farmer}
-        />
+        <Farmer />
 
         <View style={s.information}>
           <Tooltip style={s.tooltip}>
@@ -21,7 +17,7 @@ const Info = ({ onClose }) => {
               <Text style={s.title}>Thank you for playing!</Text>
 
               <Text style={s.description}>
-                In the classic game, I&apos;ve guess a 4-digit secret number, and you need to find
+                In the classic game, I've guess a 4-digit secret number, and you need to find
                 it. After each guess, I will tells you how many "bulls" and how many "cows" are in
                 your guess, interpreted as:
 
@@ -70,7 +66,10 @@ const Info = ({ onClose }) => {
         </View>
 
         <View style={s.controls}>
-          <CloseButton onPress={onClose} />
+          <CloseButton
+            title="close"
+            onPress={onClose}
+          />
         </View>
       </View>
     </Overlay>
@@ -84,12 +83,9 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  image: {
-    height: 210,
-  },
   tooltip: {
     marginTop: 15,
-    width: '100%',
+    minWidth: '100%',
   },
   title: {
     fontSize: 24,

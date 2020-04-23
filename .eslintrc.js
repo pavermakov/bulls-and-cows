@@ -45,6 +45,8 @@ module.exports = {
     "react/jsx-props-no-spreading": ["off"],
     "global-require": ["off"],
     "no-unused-expressions": ["off"],
-    "react/prop-types": 1
+    "react/prop-types": 1,
+    "react/jsx-wrap-multilines": ["off"],
+    "react/jsx-one-expression-per-line": ["off"]
   }
 };
