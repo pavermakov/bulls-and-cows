@@ -1,14 +1,14 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-const CloseButton = ({ onPress }) => {
+const CloseButton = ({ title, onPress }) => {
   return (
     <TouchableOpacity
       style={s.root}
       onPress={onPress}
     >
       <Text style={s.text}>
-        close
+        {title}
       </Text>
     </TouchableOpacity>
   );
