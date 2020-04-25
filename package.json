@@ -9,7 +9,8 @@
     "test": "jest",
     "lint": "eslint .",
     "devtools": "react-devtools",
-    "pod:install": "cd ios; pod install; cd .."
+    "pod:install": "cd ios; pod install; cd ..",
+    "android:clean": "cd android; ./gradlew clean; cd .."
   },
   "dependencies": {
     "@react-native-community/async-storage": "1.9.0",
