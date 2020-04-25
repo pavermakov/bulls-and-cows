@@ -44,6 +44,8 @@ const getInitialState = () => {
     history: [],
     isInfoVisible: true,
     isFinishVisible: false,
+    startTime: Date.now(),
+    endTime: null,
   };
 };
 
@@ -51,7 +53,16 @@ const App = () => {
   const guessedValues = useRef(getSecretValue());
   const { toggleAnimation } = useAnimationSettings();
   const [state, setState] = useSetState(getInitialState());
-  const { input, dummyKeys, history, lockedInputs, isInfoVisible, isFinishVisible } = state;
+  const {
+    input,
+    dummyKeys,
+    history,
+    lockedInputs,
+    isInfoVisible,
+    isFinishVisible,
+    startTime,
+    endTime,
+  } = state;
 
   const $cell1 = useRef();
   const $cell2 = useRef();
@@ -95,12 +106,15 @@ const App = () => {
 
           setState({ history: [...history, newHistoryItem] });
 
-          if (!results.isMatched) {
-            return;
-          }
+          // if (!results.isMatched) {
+          //   return;
+          // }
 
           await delay(1000);
-          setState({ isFinishVisible: true });
+          setState({
+            isFinishVisible: true,
+            endTime: Date.now(),
+          });
         }
       },
     };
@@ -190,7 +204,10 @@ const App = () => {
 
   const resetGame = () => {
     guessedValues.current = getSecretValue();
-    setState(getInitialState());
+    setState({
+      ...getInitialState(),
+      isInfoVisible: false,
+    });
   };
 
   const showInfo = () => setState({ isInfoVisible: true });
@@ -239,9 +256,12 @@ const App = () => {
 
       {isInfoVisible && <Info onClose={hideInfo} />}
 
-      {isFinishVisible &&
+      {true && isFinishVisible &&
         <Finish
           value={guessedValues.current.join('')}
+          attempts={history.length}
+          startTime={startTime}
+          endTime={endTime}
           onRestart={resetGame}
         />
       }
