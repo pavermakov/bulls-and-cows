@@ -1,5 +1,5 @@
 # Bulls and Cows
-> A fun game made with React-Native.
+A fun game made with React-Native.
 
 ## Rules
 - The AI thinks of a number, while the player tries to guess it.
