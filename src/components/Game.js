@@ -106,9 +106,9 @@ const App = () => {
 
           setState({ history: [...history, newHistoryItem] });
 
-          // if (!results.isMatched) {
-          //   return;
-          // }
+          if (!results.isMatched) {
+            return;
+          }
 
           await delay(1000);
           setState({
