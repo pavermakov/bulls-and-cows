@@ -1,6 +1,8 @@
 # Bulls and Cows
 > A fun game made with React-Native.
 
+[History and rules](https://en.wikipedia.org/wiki/Bulls_and_Cows)
+
 ## Demo
 <img
   src="demo/ios.gif"
