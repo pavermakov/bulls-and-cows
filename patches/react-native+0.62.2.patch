@@ -1,0 +1,58 @@
+diff --git a/node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm b/node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm
+index 18b0e09..6e676f9 100644
+--- a/node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm
++++ b/node_modules/react-native/React/CxxBridge/RCTCxxBridge.mm
+@@ -768,7 +768,7 @@ - (void)registerExtraLazyModules
+ #endif
+ }
+ 
+-- (NSArray<RCTModuleData *> *)_initializeModules:(NSArray<id<RCTBridgeModule>> *)modules
++- (NSArray<RCTModuleData *> *)_initializeModules:(NSArray<Class> *)modules
+                                withDispatchGroup:(dispatch_group_t)dispatchGroup
+                                 lazilyDiscovered:(BOOL)lazilyDiscovered
+ {
+diff --git a/node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm b/node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm
+index 841f925..c28bc30 100644
+--- a/node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm
++++ b/node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm
+@@ -304,7 +304,7 @@ - (void)notifyAboutTurboModuleSetup:(const char *)name
+             @"%@ has no setter or ivar for its bridge, which is not "
+              "permitted. You must either @synthesize the bridge property, "
+              "or provide your own setter method.",
+-            RCTBridgeModuleNameForClass(strongModule));
++            RCTBridgeModuleNameForClass([strongModule class]));
+       }
+     }
+ 
+diff --git a/node_modules/react-native/ReactCommon/yoga/Yoga.podspec b/node_modules/react-native/ReactCommon/yoga/Yoga.podspec
+index 82051b0..9cff662 100644
+--- a/node_modules/react-native/ReactCommon/yoga/Yoga.podspec
++++ b/node_modules/react-native/ReactCommon/yoga/Yoga.podspec
+@@ -37,7 +37,6 @@ Pod::Spec.new do |spec|
+       '-fno-omit-frame-pointer',
+       '-fexceptions',
+       '-Wall',
+-      '-Werror',
+       '-std=c++1y',
+       '-fPIC'
+   ]
+diff --git a/node_modules/react-native/scripts/.packager.env b/node_modules/react-native/scripts/.packager.env
+new file mode 100644
+index 0000000..361f5fb
+--- /dev/null
++++ b/node_modules/react-native/scripts/.packager.env
+@@ -0,0 +1 @@
++export RCT_METRO_PORT=8081
+diff --git a/node_modules/react-native/scripts/ios-configure-glog.sh b/node_modules/react-native/scripts/ios-configure-glog.sh
+index 73a892c..123c4e7 100755
+--- a/node_modules/react-native/scripts/ios-configure-glog.sh
++++ b/node_modules/react-native/scripts/ios-configure-glog.sh
+@@ -16,7 +16,7 @@ if [ -z "$CURRENT_ARCH" ] || [ "$CURRENT_ARCH" == "undefined_arch" ]; then
+     if [[ "$PLATFORM_NAME" == *"simulator"* ]]; then
+         CURRENT_ARCH="x86_64"
+     else
+-        CURRENT_ARCH="armv7"
++        CURRENT_ARCH="arm64"
+     fi
+ fi
+ 

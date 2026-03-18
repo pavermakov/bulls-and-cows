@@ -1,0 +1,38 @@
+diff --git a/node_modules/metro/src/DeltaBundler/Transformer/getTransformCacheKey.js b/node_modules/metro/src/DeltaBundler/Transformer/getTransformCacheKey.js
+index 87769ca..e40739d 100644
+--- a/node_modules/metro/src/DeltaBundler/Transformer/getTransformCacheKey.js
++++ b/node_modules/metro/src/DeltaBundler/Transformer/getTransformCacheKey.js
+@@ -30,10 +30,10 @@ function getTransformCacheKey(opts) {
+ 
+   const Transformer = require(transformerPath);
+ 
+-  const transformerInstance = new Transformer(
+-    opts.projectRoot,
+-    transformerConfig
+-  );
++  // Support both class-based and plain-object (module-style) transformers
++  const transformerInstance = typeof Transformer === "function"
++    ? new Transformer(opts.projectRoot, transformerConfig)
++    : Transformer;
+   const transformerKey =
+     typeof transformerInstance.getCacheKey !== "undefined"
+       ? transformerInstance.getCacheKey()
+diff --git a/node_modules/metro/src/DeltaBundler/Worker.js b/node_modules/metro/src/DeltaBundler/Worker.js
+index 4fbef0d..19ba589 100644
+--- a/node_modules/metro/src/DeltaBundler/Worker.js
++++ b/node_modules/metro/src/DeltaBundler/Worker.js
+@@ -68,10 +68,10 @@ function getTransformer(projectRoot, _ref) {
+ 
+   const Transformer = require(transformerPath);
+ 
+-  transformers[transformerKey] = new Transformer(
+-    projectRoot,
+-    transformerConfig
+-  );
++  // Support both class-based and plain-object (module-style) transformers
++  transformers[transformerKey] = typeof Transformer === "function"
++    ? new Transformer(projectRoot, transformerConfig)
++    : Transformer;
+   return transformers[transformerKey];
+ }
+ 

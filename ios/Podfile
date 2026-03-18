@@ -84,13 +84,17 @@ target 'bullsAndCows' do
 
   use_native_modules!
 
-  # Enables Flipper.
-  #
-  # Note that if you have use_frameworks! enabled, Flipper will not work and
-  # you should disable these next few lines.
-  add_flipper_pods!
+  # Flipper disabled — incompatible with newer Xcode/macOS (arm64)
+  # add_flipper_pods!
+
   post_install do |installer|
-    flipper_post_install(installer)
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        # Suppress warnings-as-errors for older pods incompatible with newer Clang
+        config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+        config.build_settings['SWIFT_SUPPRESS_WARNINGS'] = 'YES'
+      end
+    end
   end
 end
 
