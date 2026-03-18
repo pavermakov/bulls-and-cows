@@ -1,3 +1,9 @@
+# Claude Code
+.claude
+
+# VSCode
+.vscode
+
 # OSX
 #
 .DS_Store
