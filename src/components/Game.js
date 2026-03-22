@@ -256,7 +256,7 @@ const App = () => {
 
       {isInfoVisible && <Info onClose={hideInfo} />}
 
-      {true && isFinishVisible &&
+      {isFinishVisible &&
         <Finish
           value={guessedValues.current.join('')}
           attempts={history.length}
@@ -277,7 +277,7 @@ const s = StyleSheet.create({
   },
   controls: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,
   },
 });
 
